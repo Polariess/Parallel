@@ -45,21 +45,23 @@ void add_merge(int n)
 int main()
 {
 	//n:数据规模 n:单轮运算次数 限定每次程序执行总运算量为10^9,T为执行轮数
-	int n=1<<17;
+	int n=1<<20;
 	//std::cout<<n<<std::endl;
 	int T=1000000000ll/n;
 	//std::cout<<T<<std::endl;
 	for(int i=0;i<n;i++)
 	{
 		ta[i]=i+1;
-	} 
+	}
+	int x;
+	std::cin>>x;
 	high_resolution_clock::time_point t1=high_resolution_clock::now();
 	for(int i=1;i<=T;i++)
 	{
 		init(n);
 		//选择不同的优化算法，分别记录平均用时 
-		//add_normal(n);
-		add_double_chain(n);
+		add_normal(n);
+		//add_double_chain(n);
 		//add_merge(n); 
 	}
 	high_resolution_clock::time_point t2=high_resolution_clock::now();
