@@ -17,7 +17,7 @@ void add_normal(int n)
 	{
 		sum+=a[i];	
 	}
-//  return sum; //ÑéÖ¤³ÌĞòÕıÈ·ĞÔ
+//  return sum; //éªŒè¯ç¨‹åºæ­£ç¡®æ€§
 }
 
 void add_double_chain(int n)
@@ -29,7 +29,7 @@ void add_double_chain(int n)
 		sum2+=a[i+1];
 	}
 	sum=sum1+sum2;
-//  return sum; //ÑéÖ¤³ÌĞòÕıÈ·ĞÔ
+//  return sum; //éªŒè¯ç¨‹åºæ­£ç¡®æ€§
 }
 void add_merge(int n)
 {
@@ -40,11 +40,11 @@ void add_merge(int n)
           	a[i]=a[i<<1]+a[(i<<1)+1];
     	}
   	}
-  	//return a[0]; //ÑéÖ¤³ÌĞòÕıÈ·ĞÔ
+  	//return a[0]; //éªŒè¯ç¨‹åºæ­£ç¡®æ€§
 }
 int main()
 {
-	//n:Êı¾İ¹æÄ£ n:µ¥ÂÖÔËËã´ÎÊı ÏŞ¶¨Ã¿´Î³ÌĞòÖ´ĞĞ×ÜÔËËãÁ¿Îª10^9,TÎªÖ´ĞĞÂÖÊı
+	//n:æ•°æ®è§„æ¨¡ n:å•è½®è¿ç®—æ¬¡æ•° é™å®šæ¯æ¬¡ç¨‹åºæ‰§è¡Œæ€»è¿ç®—é‡ä¸º10^9,Tä¸ºæ‰§è¡Œè½®æ•°
 	int n=1<<20;
 	//std::cout<<n<<std::endl;
 	int T=1000000000ll/n;
@@ -53,13 +53,13 @@ int main()
 	{
 		ta[i]=i+1;
 	}
-	int x;
-	std::cin>>x;
+//	int x;
+//	std::cin>>x;
 	high_resolution_clock::time_point t1=high_resolution_clock::now();
 	for(int i=1;i<=T;i++)
 	{
 		init(n);
-		//Ñ¡Ôñ²»Í¬µÄÓÅ»¯Ëã·¨£¬·Ö±ğ¼ÇÂ¼Æ½¾ùÓÃÊ± 
+		//é€‰æ‹©ä¸åŒçš„ä¼˜åŒ–ç®—æ³•ï¼Œåˆ†åˆ«è®°å½•å¹³å‡ç”¨æ—¶ 
 		add_normal(n);
 		//add_double_chain(n);
 		//add_merge(n); 
