@@ -9,7 +9,7 @@
 #include<immintrin.h>
 #include<cstring>
 using namespace std;
-const int N=100; 
+const int N=200; 
 const int MAX=1000;
 float a[N][N];
 void Print(float A[][N])
@@ -25,7 +25,7 @@ void Print(float A[][N])
 void Prepare()
 {
 	srand (static_cast <unsigned> (time(0)));
-	//¹¹ÔìÔ­Ê¼ÉÏÈı½Ç¾ØÕó:Ò²¼´Ëã·¨´¦ÀíºóÆÚÍûµÃµ½µÄÕıÈ·½á¹û 
+	//æ„é€ åŸå§‹ä¸Šä¸‰è§’çŸ©é˜µ:ä¹Ÿå³ç®—æ³•å¤„ç†åæœŸæœ›å¾—åˆ°çš„æ­£ç¡®ç»“æœ 
 	for(int i=0;i<N;i++)
 	{
 		for(int j=0;j<i;j++)
@@ -35,8 +35,8 @@ void Prepare()
  			a[i][j]=rand()%MAX;
  	}
 	
- 	//ºóÃæÃ¿Ò»ĞĞÈ«²¿¼ÓÉÏÇ°ÃæµÄĞĞ£¬¿É¿´×÷Ëã·¨µÄÄæÏò²Ù×÷
-	//ÕâÑù¹¹Ôì³öµÄ¾ØÕóÒ»¶¨¿ÉÒÔ»¯Îª±ê×¼µÄÉÏÈı½ÇĞÎÊ½ 
+ 	//åé¢æ¯ä¸€è¡Œå…¨éƒ¨åŠ ä¸Šå‰é¢çš„è¡Œï¼Œå¯çœ‹ä½œç®—æ³•çš„é€†å‘æ“ä½œ
+	//è¿™æ ·æ„é€ å‡ºçš„çŸ©é˜µä¸€å®šå¯ä»¥åŒ–ä¸ºæ ‡å‡†çš„ä¸Šä¸‰è§’å½¢å¼ 
  	for(int k=0;k<N;k++)
  		for(int i=k+1;i<N;i++)
  			for(int j=0;j<N;j++)
@@ -49,19 +49,19 @@ void Solve_Normal(float A[][N])
 		{
 			float u=a[i][k]/a[k][k];
 			for(int j=k+1;j<N;j++)
-			//ÕıÈ·×ö·¨Ó¦¸ÃÊÇ0 - n-1£¬µ«ÒÑÖª±ØÈ»»¯ÎªÉÏÈı½Ç¾ØÕó£¬¿ÉÔÚºóĞøÖ±½Ó´¦Àí 
+			//æ­£ç¡®åšæ³•åº”è¯¥æ˜¯0 - n-1ï¼Œä½†å·²çŸ¥å¿…ç„¶åŒ–ä¸ºä¸Šä¸‰è§’çŸ©é˜µï¼Œå¯åœ¨åç»­ç›´æ¥å¤„ç† 
 				a[i][j]-=u*a[k][j];
-			a[i][k] = 0.0; //»¯ÎªÉÏÈı½Ç¾ØÕó£¬×óÏÂ½ÇÇå0 
+			a[i][k] = 0.0; //åŒ–ä¸ºä¸Šä¸‰è§’çŸ©é˜µï¼Œå·¦ä¸‹è§’æ¸…0 
 		}
 }
 
 
-void Solve_SSE_ALIGN(float A[][N]) {  //¶ÔÆëµÄSSEËã·¨
+void Solve_SSE_ALIGN(float A[][N]) {  //å¯¹é½çš„SSEç®—æ³•
     for (int k = 0; k < N; k++) {
         __m128 t1 = _mm_set1_ps(A[k][k]);
         int j = k+1;
 
-        //¶Ô·Ç¶ÔÆë²¿·Ö½øĞĞ´®ĞĞ´¦Àí 
+        //å¯¹éå¯¹é½éƒ¨åˆ†è¿›è¡Œä¸²è¡Œå¤„ç† 
         while ((long long)(&A[k][j])%16)
         {
             A[k][j] = A[k][j] / A[k][k];
@@ -69,11 +69,11 @@ void Solve_SSE_ALIGN(float A[][N]) {  //¶ÔÆëµÄSSEËã·¨
         }
         //cout << &m[k][j]<<endl;
         for ( ; j + 4 <= N; j += 4) {
-            __m128 t2 = _mm_load_ps(&A[k][j]);   //ÒÑ¶ÔÆë£¬ÓÃloadºÍstoreÖ¸Áî
+            __m128 t2 = _mm_load_ps(&A[k][j]);   //å·²å¯¹é½ï¼Œç”¨loadå’ŒstoreæŒ‡ä»¤
             t2 = _mm_div_ps(t2, t1);
             _mm_store_ps(&A[k][j], t2);
         }
-        //¶ÔĞĞÄ©½øĞĞ´®ĞĞ´¦Àí 
+        //å¯¹è¡Œæœ«è¿›è¡Œä¸²è¡Œå¤„ç† 
         for (; j < N; j++) {
             A[k][j] = A[k][j] / A[k][k];
         }
@@ -81,7 +81,7 @@ void Solve_SSE_ALIGN(float A[][N]) {  //¶ÔÆëµÄSSEËã·¨
         for (int i = k + 1; i < N; i++) {
             __m128 vik = _mm_set1_ps(A[i][k]);
             j = k + 1;
-            //ÏÂÃæÍ¬Àí 
+            //ä¸‹é¢åŒç† 
             while ((long long)(&A[k][j])%16)
             {
                 A[i][j] = A[i][j] - A[i][k] * A[k][j];
@@ -276,67 +276,67 @@ void Solve_AVX_512_ALIGN(float A[][N]) {
 int main()
 {
 	struct timespec start, end;
-    long long elapsed_time; // ÓÃÀ´´æ´¢¾­¹ıµÄÊ±¼ä£¨ºÁÃë£©
+    double elapsed_time; // ç”¨æ¥å­˜å‚¨ç»è¿‡çš„æ—¶é—´ï¼ˆæ¯«ç§’ï¼‰
 
-    // ´òÓ¡µ±Ç°Êı¾İ¹æÄ£
-    printf("µ±Ç°Êı¾İ¹æÄ£Îª:%d\n", N);
+    // æ‰“å°å½“å‰æ•°æ®è§„æ¨¡
+    printf("å½“å‰æ•°æ®è§„æ¨¡ä¸º:%d\n", N);
 
-    // Æ½·²Ëã·¨¼ÆÊ±
+    // å¹³å‡¡ç®—æ³•è®¡æ—¶
     Prepare();
     clock_gettime(CLOCK_MONOTONIC, &start);
     Solve_Normal(a);
     clock_gettime(CLOCK_MONOTONIC, &end);
-    elapsed_time = (end.tv_sec - start.tv_sec) * 1000LL + (end.tv_nsec - start.tv_nsec) / 1000000;
-    printf("Æ½·²Ëã·¨ÓÃÊ±:%lldms\n", elapsed_time);
+    elapsed_time = (end.tv_sec - start.tv_sec) * 1000 + (double)(end.tv_nsec - start.tv_nsec) / 1000000;
+    printf("å¹³å‡¡ç®—æ³•ç”¨æ—¶:%.2lfms\n", elapsed_time);
 
-    // SSEÎŞ¶ÔÆë¼ÆÊ±
+    // SSEæ— å¯¹é½è®¡æ—¶
     Prepare();
     clock_gettime(CLOCK_MONOTONIC, &start);
     Solve_SSE(a);
     clock_gettime(CLOCK_MONOTONIC, &end);
-    elapsed_time = (end.tv_sec - start.tv_sec) * 1000LL + (end.tv_nsec - start.tv_nsec) / 1000000;
-    printf("SSE(ÎŞ¶ÔÆë)ÓÃÊ±:%lldms\n", elapsed_time);
+    elapsed_time = (end.tv_sec - start.tv_sec) * 1000 + (double)(end.tv_nsec - start.tv_nsec) / 1000000;
+    printf("SSE(æ— å¯¹é½)ç”¨æ—¶:%.2lfms\n", elapsed_time);
 
-    // SSE¶ÔÆë¼ÆÊ±
+    // SSEå¯¹é½è®¡æ—¶
     Prepare();
     clock_gettime(CLOCK_MONOTONIC, &start);
     Solve_SSE_ALIGN(a);
     clock_gettime(CLOCK_MONOTONIC, &end);
-    elapsed_time = (end.tv_sec - start.tv_sec) * 1000LL + (end.tv_nsec - start.tv_nsec) / 1000000;
-    printf("SSE(¶ÔÆë)ÓÃÊ±:%lldms\n", elapsed_time);
+    elapsed_time = (end.tv_sec - start.tv_sec) * 1000 + (double)(end.tv_nsec - start.tv_nsec) / 1000000;
+    printf("SSE(å¯¹é½)ç”¨æ—¶:%.2lfms\n", elapsed_time);
     
-    // AVXÎŞ¶ÔÆë¼ÆÊ±
+    // AVXæ— å¯¹é½è®¡æ—¶
     Prepare();
     clock_gettime(CLOCK_MONOTONIC, &start);
     Solve_AVX(a);
     clock_gettime(CLOCK_MONOTONIC, &end);
-    elapsed_time = (end.tv_sec - start.tv_sec) * 1000LL + (end.tv_nsec - start.tv_nsec) / 1000000;
-    printf("AVX(ÎŞ¶ÔÆë)ÓÃÊ±:%lldms\n", elapsed_time);
+    elapsed_time = (end.tv_sec - start.tv_sec) * 1000 + (double)(end.tv_nsec - start.tv_nsec) / 1000000;
+    printf("AVX(æ— å¯¹é½)ç”¨æ—¶:%.2lfms\n", elapsed_time);
 
-    // AVX¶ÔÆë¼ÆÊ±
+    // AVXå¯¹é½è®¡æ—¶
     Prepare();
     clock_gettime(CLOCK_MONOTONIC, &start);
     Solve_AVX_ALIGN(a);
     clock_gettime(CLOCK_MONOTONIC, &end);
-    elapsed_time = (end.tv_sec - start.tv_sec) * 1000LL + (end.tv_nsec - start.tv_nsec) / 1000000;
-    printf("AVX(¶ÔÆë)ÓÃÊ±:%lldms\n", elapsed_time);
+    elapsed_time = (end.tv_sec - start.tv_sec) * 1000 + (double)(end.tv_nsec - start.tv_nsec) / 1000000;
+    printf("AVX(å¯¹é½)ç”¨æ—¶:%.2lfms\n", elapsed_time);
 
-//	return 0;
+	return 0;
 	
-    // AVX-512ÎŞ¶ÔÆë¼ÆÊ±
+    // AVX-512æ— å¯¹é½è®¡æ—¶
     Prepare();
     clock_gettime(CLOCK_MONOTONIC, &start);
     Solve_AVX_512(a);
     clock_gettime(CLOCK_MONOTONIC, &end);
-    elapsed_time = (end.tv_sec - start.tv_sec) * 1000LL + (end.tv_nsec - start.tv_nsec) / 1000000;
-    printf("AVX-512(ÎŞ¶ÔÆë)ÓÃÊ±:%lldms\n", elapsed_time);
+    elapsed_time = (end.tv_sec - start.tv_sec) * 1000 + (double)(end.tv_nsec - start.tv_nsec) / 1000000;
+    printf("AVX-512(æ— å¯¹é½)ç”¨æ—¶:%.2lfms\n", elapsed_time);
 
-    // AVX-512¶ÔÆë¼ÆÊ±
+    // AVX-512å¯¹é½è®¡æ—¶
     Prepare();
     clock_gettime(CLOCK_MONOTONIC, &start);
     Solve_AVX_512_ALIGN(a);
     clock_gettime(CLOCK_MONOTONIC, &end);
-    elapsed_time = (end.tv_sec - start.tv_sec) * 1000LL + (end.tv_nsec - start.tv_nsec) / 1000000;
-    printf("AVX-512(¶ÔÆë)ÓÃÊ±:%lldms\n", elapsed_time);
+    elapsed_time = (end.tv_sec - start.tv_sec) * 1000 + (double)(end.tv_nsec - start.tv_nsec) / 1000000;
+    printf("AVX-512(å¯¹é½)ç”¨æ—¶:%.2lfms\n", elapsed_time);
 	return 0;
 }
