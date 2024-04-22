@@ -14,7 +14,7 @@
 #include<immintrin.h>
 using namespace std;
 
-const int T=5;//ÔËĞĞÂÖÊı 
+const int T=5;//è¿è¡Œè½®æ•° 
 const int maxsize = 3000;
 const int maxrow = 3000;
 const int numBasis = 90000;
@@ -23,8 +23,8 @@ map<int, int*>iToBasis;
 map<int, int>iToFirst;
 map<int, int*>ans;
 
-fstream RowFile("±»ÏûÔªĞĞ.txt", ios::in | ios::out);
-fstream BasisFile("ÏûÔª×Ó.txt", ios::in | ios::out);
+fstream RowFile("è¢«æ¶ˆå…ƒè¡Œ.txt", ios::in | ios::out);
+fstream BasisFile("æ¶ˆå…ƒå­.txt", ios::in | ios::out);
 
 int gRows[maxrow][maxsize];
 int gBasis[numBasis][maxsize];
@@ -34,8 +34,8 @@ void reset() {
 	memset(gBasis, 0, sizeof(gBasis));
 	RowFile.close();
 	BasisFile.close();
-	RowFile.open("±»ÏûÔªĞĞ.txt", ios::in | ios::out);
-	BasisFile.open("ÏûÔª×Ó.txt", ios::in | ios::out);
+	RowFile.open("è¢«æ¶ˆå…ƒè¡Œ.txt", ios::in | ios::out);
+	BasisFile.open("æ¶ˆå…ƒå­.txt", ios::in | ios::out);
 	iToBasis.clear();
 	iToFirst.clear();
 	ans.clear();
@@ -72,7 +72,7 @@ int readRowsFrom(int pos) {
 	iToFirst.clear();
 	if (RowFile.is_open())
 		RowFile.close();
-	RowFile.open("±»ÏûÔªĞĞ.txt", ios::in | ios::out);
+	RowFile.open("è¢«æ¶ˆå…ƒè¡Œ.txt", ios::in | ios::out);
 	memset(gRows, 0, sizeof(gRows));
 	string line;
 	for (int i = 0; i < pos; i++) {
@@ -276,8 +276,8 @@ void Solve_SSE() {
 
 int main() {
 	struct timespec start, end;
-    long long elapsed_time; // ÓÃÀ´´æ´¢¾­¹ıµÄÊ±¼ä£¨ºÁÃë£©
-	long long time1=0, time2=0, time3=0;
+    long double elapsed_time; // ç”¨æ¥å­˜å‚¨ç»è¿‡çš„æ—¶é—´ï¼ˆæ¯«ç§’ï¼‰
+	long double time1=0.0, time2=0.0, time3=0.0;
 	
 	
 	for (int i = 0; i < T; i++) {
@@ -292,7 +292,7 @@ int main() {
 		clock_gettime(CLOCK_MONOTONIC, &start);
 		Solve_Normal();
 		clock_gettime(CLOCK_MONOTONIC, &end);
-		elapsed_time = (end.tv_sec - start.tv_sec) * 1000LL + (end.tv_nsec - start.tv_nsec) / 1000000;
+		elapsed_time = (long double)(end.tv_sec - start.tv_sec) * 1000 + (long double)(end.tv_nsec - start.tv_nsec) / 1000000;
 		cout << "Normal time:" << elapsed_time << "ms" << endl;
 		time1 += elapsed_time;
 		writeResult(out1);
@@ -303,7 +303,7 @@ int main() {
 		clock_gettime(CLOCK_MONOTONIC, &start);
 		Solve_SSE();
 		clock_gettime(CLOCK_MONOTONIC, &end);
-		elapsed_time = (end.tv_sec - start.tv_sec) * 1000LL + (end.tv_nsec - start.tv_nsec) / 1000000;
+		elapsed_time = (long double)(end.tv_sec - start.tv_sec) * 1000 + (long double)(end.tv_nsec - start.tv_nsec) / 1000000;
 		cout << "SSE time:" << elapsed_time << "ms" << endl;
 		time2 += elapsed_time;
 		writeResult(out1);
@@ -313,7 +313,7 @@ int main() {
 		clock_gettime(CLOCK_MONOTONIC, &start);
 		Solve_AVX();
 		clock_gettime(CLOCK_MONOTONIC, &end);
-		elapsed_time = (end.tv_sec - start.tv_sec) * 1000LL + (end.tv_nsec - start.tv_nsec) / 1000000;
+		elapsed_time = (long double)(end.tv_sec - start.tv_sec) * 1000 + (long double)(end.tv_nsec - start.tv_nsec) / 1000000;
 		cout << "AVX time:" << elapsed_time << "ms" << endl;
 		time3 += elapsed_time;
 		writeResult(out1);
@@ -325,4 +325,3 @@ int main() {
 	}
 	cout << "time1(Normal):" << time1/T << " time2(SSE):" << time2/T << " time3(AVX):" << time3/T;
 }
-
