@@ -18,29 +18,29 @@ using namespace std;
 #define NUM_THREADS 8
 
 
-struct threadParam_t {    //²ÎÊıÊı¾İ½á¹¹
+struct threadParam_t {    //å‚æ•°æ•°æ®ç»“æ„
 	int t_id;
 	int num;
 };
 
 const int maxsize = 3000;
-const int maxrow = 60000; //3000*32>90000 ,×î¶à´æÖüÁĞÊı90000µÄ±»ÏûÔªĞĞ¾ØÕó60000ĞĞ
-const int numBasis = 100000;   //×î¶à´æ´¢90000*100000µÄÏûÔª×Ó
+const int maxrow = 60000; //3000*32>90000 ,æœ€å¤šå­˜è´®åˆ—æ•°90000çš„è¢«æ¶ˆå…ƒè¡ŒçŸ©é˜µ60000è¡Œ
+const int numBasis = 100000;   //æœ€å¤šå­˜å‚¨90000*100000çš„æ¶ˆå…ƒå­
 
-pthread_mutex_t lock;  //Ğ´ÈëÏûÔª×ÓÊ±ĞèÒª¼ÓËø
+pthread_mutex_t lock;  //å†™å…¥æ¶ˆå…ƒå­æ—¶éœ€è¦åŠ é”
 
 //long long read = 0;
 long long head, tail, freq;
 
-//map<int, int*>iToBasis;    //Ê×ÏîÎªiµÄÏûÔª×ÓµÄÓ³Éä
-map<int, int*>ans;			//´ğ°¸
+//map<int, int*>iToBasis;    //é¦–é¡¹ä¸ºiçš„æ¶ˆå…ƒå­çš„æ˜ å°„
+map<int, int*>ans;			//ç­”æ¡ˆ
 
-fstream RowFile("±»ÏûÔªĞĞ.txt", ios::in | ios::out);
-fstream BasisFile("ÏûÔª×Ó.txt", ios::in | ios::out);
+fstream RowFile("è¢«æ¶ˆå…ƒè¡Œ.txt", ios::in | ios::out);
+fstream BasisFile("æ¶ˆå…ƒå­.txt", ios::in | ios::out);
 
 
-int gRows[maxrow][maxsize];   //±»ÏûÔªĞĞ×î¶à60000ĞĞ£¬3000ÁĞ
-int gBasis[numBasis][maxsize];  //ÏûÔª×Ó×î¶à40000ĞĞ£¬3000ÁĞ
+int gRows[maxrow][maxsize];   //è¢«æ¶ˆå…ƒè¡Œæœ€å¤š60000è¡Œï¼Œ3000åˆ—
+int gBasis[numBasis][maxsize];  //æ¶ˆå…ƒå­æœ€å¤š40000è¡Œï¼Œ3000åˆ—
 
 int ifBasis[numBasis] = { 0 };
 
@@ -51,17 +51,17 @@ void reset() {
 	memset(ifBasis, 0, sizeof(ifBasis));
 	RowFile.close();
 	BasisFile.close();
-	RowFile.open("±»ÏûÔªĞĞ.txt", ios::in | ios::out);
-	BasisFile.open("ÏûÔª×Ó.txt", ios::in | ios::out);
+	RowFile.open("è¢«æ¶ˆå…ƒè¡Œ.txt", ios::in | ios::out);
+	BasisFile.open("æ¶ˆå…ƒå­.txt", ios::in | ios::out);
 	//iToBasis.clear();
 
 	ans.clear();
 }
 
-int readBasis() {          //¶ÁÈ¡ÏûÔª×Ó
+int readBasis() {          //è¯»å–æ¶ˆå…ƒå­
 	for (int i = 0; i < numBasis; i++) {
 		if (BasisFile.eof()) {
-			cout << "¶ÁÈ¡ÏûÔª×Ó" << i - 1 << "ĞĞ" << endl;
+			cout << "è¯»å–æ¶ˆå…ƒå­" << i - 1 << "è¡Œ" << endl;
 			return i - 1;
 		}
 		string tmp;
@@ -87,18 +87,18 @@ int readBasis() {          //¶ÁÈ¡ÏûÔª×Ó
 	}
 }
 
-int readRowsFrom() {       //¶ÁÈ¡±»ÏûÔªĞĞ
+int readRowsFrom() {       //è¯»å–è¢«æ¶ˆå…ƒè¡Œ
 	if (RowFile.is_open())
 		RowFile.close();
-	RowFile.open("±»ÏûÔªĞĞ.txt", ios::in | ios::out);
-	memset(gRows, 0, sizeof(gRows));   //ÖØÖÃÎª0
+	RowFile.open("è¢«æ¶ˆå…ƒè¡Œ.txt", ios::in | ios::out);
+	memset(gRows, 0, sizeof(gRows));   //é‡ç½®ä¸º0
 	string line;
 	for (int i = 0; i < maxrow; i++) {
 		int tmp;
 		getline(RowFile, line);
 		if (line.empty()) {
-			cout << "¶ÁÈ¡±»ÏûÔªĞĞ " << i << " ĞĞ" << endl;
-			return i;   //·µ»Ø¶ÁÈ¡µÄĞĞÊı
+			cout << "è¯»å–è¢«æ¶ˆå…ƒè¡Œ " << i << " è¡Œ" << endl;
+			return i;   //è¿”å›è¯»å–çš„è¡Œæ•°
 		}
 		bool flag = false;
 		stringstream s(line);
@@ -110,11 +110,11 @@ int readRowsFrom() {       //¶ÁÈ¡±»ÏûÔªĞĞ
 		}
 	}
 	cout << "read max rows" << endl;
-	return -1;  //³É¹¦¶ÁÈ¡maxrowĞĞ
+	return -1;  //æˆåŠŸè¯»å–maxrowè¡Œ
 
 }
 
-int findfirst(int row) {  //Ñ°ÕÒµÚrowĞĞ±»ÏûÔªĞĞµÄÊ×Ïî
+int findfirst(int row) {  //å¯»æ‰¾ç¬¬rowè¡Œè¢«æ¶ˆå…ƒè¡Œçš„é¦–é¡¹
 	int first;
 	for (int i = maxsize - 1; i >= 0; i--) {
 		if (gRows[row][i] == 0)
@@ -159,18 +159,18 @@ void writeResult(ofstream& out) {
 
 void GE() {
 	int flag;
-	flag = readRowsFrom();     //¶ÁÈ¡±»ÏûÔªĞĞ
+	flag = readRowsFrom();     //è¯»å–è¢«æ¶ˆå…ƒè¡Œ
 
 	int num = (flag == -1) ? maxrow : flag;
 	QueryPerformanceCounter((LARGE_INTEGER*)&head);
 	for (int i = 0; i < num; i++) {
-		while (findfirst(i)!= -1) {     //´æÔÚÊ×Ïî
-			int first =findfirst(i);      //firstÊÇÊ×Ïî
-			if (ifBasis[first]==1) {  //´æÔÚÊ×ÏîÎªfirstÏûÔª×Ó
+		while (findfirst(i)!= -1) {     //å­˜åœ¨é¦–é¡¹
+			int first =findfirst(i);      //firstæ˜¯é¦–é¡¹
+			if (ifBasis[first]==1) {  //å­˜åœ¨é¦–é¡¹ä¸ºfirstæ¶ˆå…ƒå­
 				for (int j = 0; j < maxsize; j++) 
-					gRows[i][j] = gRows[i][j] ^ gBasis[first][j];     //½øĞĞÒì»òÏûÔª
+					gRows[i][j] = gRows[i][j] ^ gBasis[first][j];     //è¿›è¡Œå¼‚æˆ–æ¶ˆå…ƒ
 			}
-			else {   //ÕÒ²»µ½¶ÔÓ¦ÏûÔª×Ó£¬¸ÃĞĞ±¾Éí¼ÓÈëÏûÔª×Ó¼¯ºÏ
+			else {   //æ‰¾ä¸åˆ°å¯¹åº”æ¶ˆå…ƒå­ï¼Œè¯¥è¡Œæœ¬èº«åŠ å…¥æ¶ˆå…ƒå­é›†åˆ
 				for (int j = 0; j < maxsize; j++) {
 					gBasis[first][j] = gRows[i][j];
 				}
@@ -186,22 +186,22 @@ void GE() {
 
 void GE_omp() {
 	int flag;
-	flag = readRowsFrom();     //¶ÁÈ¡±»ÏûÔªĞĞ
+	flag = readRowsFrom();     //è¯»å–è¢«æ¶ˆå…ƒè¡Œ
 	int t_id = omp_get_thread_num();
 	int num = (flag == -1) ? maxrow : flag;
 	QueryPerformanceCounter((LARGE_INTEGER*)&head);
 #pragma omp parallel num_threads(NUM_THREADS)
 	{
-#pragma omp for schedule(guided)
+#pragma omp for schedule(dynamic)
 	for (int i = 0; i < num; i++) {
-		while (findfirst(i) != -1) {     //´æÔÚÊ×Ïî
-			int first = findfirst(i);      //firstÊÇÊ×Ïî
-			if (ifBasis[first] == 1) {  //´æÔÚÊ×ÏîÎªfirstÏûÔª×Ó
+		while (findfirst(i) != -1) {     //å­˜åœ¨é¦–é¡¹
+			int first = findfirst(i);      //firstæ˜¯é¦–é¡¹
+			if (ifBasis[first] == 1) {  //å­˜åœ¨é¦–é¡¹ä¸ºfirstæ¶ˆå…ƒå­
 				for (int j = 0; j < maxsize; j++) {
-					gRows[i][j] = gRows[i][j] ^ gBasis[first][j];     //½øĞĞÒì»òÏûÔª
+					gRows[i][j] = gRows[i][j] ^ gBasis[first][j];     //è¿›è¡Œå¼‚æˆ–æ¶ˆå…ƒ
 				}
 			}
-			else {   //ÕÒ²»µ½¶ÔÓ¦ÏûÔª×Ó£¬¸ÃĞĞ±¾Éí¼ÓÈëÏûÔª×Ó¼¯ºÏ
+			else {   //æ‰¾ä¸åˆ°å¯¹åº”æ¶ˆå…ƒå­ï¼Œè¯¥è¡Œæœ¬èº«åŠ å…¥æ¶ˆå…ƒå­é›†åˆ
 #pragma omp critical
 				if (ifBasis[first] == 0) {
 					for (int j = 0; j < maxsize; j++) {
@@ -221,13 +221,13 @@ void GE_omp() {
 
 void AVX_GE() {
 	int flag;
-	flag = readRowsFrom();     //¶ÁÈ¡±»ÏûÔªĞĞ
+	flag = readRowsFrom();     //è¯»å–è¢«æ¶ˆå…ƒè¡Œ
 	int num = (flag == -1) ? maxrow : flag;
 	QueryPerformanceCounter((LARGE_INTEGER*)&head);
 	for (int i = 0; i < num; i++) {
 		while (findfirst(i) != -1) {
 			int first = findfirst(i);
-			if (ifBasis[first]==1) {  //´æÔÚ¸ÃÏûÔª×Ó
+			if (ifBasis[first]==1) {  //å­˜åœ¨è¯¥æ¶ˆå…ƒå­
 				//int* basis = iToBasis.find(first)->second;
 				int j = 0;
 				for (; j + 8 < maxsize; j += 8) {
@@ -263,16 +263,16 @@ void AVX_GE() {
 
 void AVX_GE_omp() {
 	int flag;
-	flag = readRowsFrom();     //¶ÁÈ¡±»ÏûÔªĞĞ
+	flag = readRowsFrom();     //è¯»å–è¢«æ¶ˆå…ƒè¡Œ
 	int num = (flag == -1) ? maxrow : flag;
 	int i = 0, j = 0;
 	QueryPerformanceCounter((LARGE_INTEGER*)&head);
 #pragma omp parallel  num_threads(NUM_THREADS),private(i,j)
-#pragma omp for schedule(guided)
+#pragma omp for schedule(dynamic)
 	for (i = 0; i < num; i++) {
 		while (findfirst(i) != -1) {
 			int first = findfirst(i);
-			if (ifBasis[first]==1) {  //´æÔÚ¸ÃÏûÔª×Ó
+			if (ifBasis[first]==1) {  //å­˜åœ¨è¯¥æ¶ˆå…ƒå­
 				//int* basis = iToBasis.find(first)->second;
 				j = 0;
 				for (; j + 8 < maxsize; j += 8) {
@@ -313,25 +313,25 @@ void* GE_lock_thread(void* param) {
 	int num = p->num;
 	for (int i = t_id; i < num; i += NUM_THREADS) {
 		while (findfirst(i) != -1) {
-			int first = findfirst(i);      //firstÊÇÊ×Ïî
-			if (ifBasis[first]==1) {  //´æÔÚÊ×ÏîÎªfirstÏûÔª×Ó
+			int first = findfirst(i);      //firstæ˜¯é¦–é¡¹
+			if (ifBasis[first]==1) {  //å­˜åœ¨é¦–é¡¹ä¸ºfirstæ¶ˆå…ƒå­
 				for (int j = 0; j < maxsize; j++) {
-					gRows[i][j] = gRows[i][j] ^ gBasis[first][j];     //½øĞĞÒì»òÏûÔª
+					gRows[i][j] = gRows[i][j] ^ gBasis[first][j];     //è¿›è¡Œå¼‚æˆ–æ¶ˆå…ƒ
 				}
 			}
-			else {//ÕÒ²»µ½¶ÔÓ¦ÏûÔª×Ó£¬¸ÃĞĞ±¾Éí¼ÓÈëÏûÔª×Ó¼¯ºÏ
-				pthread_mutex_lock(&lock); //Èç¹ûµÚfirstĞĞÏûÔª×ÓÃ»ÓĞ±»Õ¼ÓÃ£¬Ôò¼ÓËø
+			else {//æ‰¾ä¸åˆ°å¯¹åº”æ¶ˆå…ƒå­ï¼Œè¯¥è¡Œæœ¬èº«åŠ å…¥æ¶ˆå…ƒå­é›†åˆ
+				pthread_mutex_lock(&lock); //å¦‚æœç¬¬firstè¡Œæ¶ˆå…ƒå­æ²¡æœ‰è¢«å ç”¨ï¼Œåˆ™åŠ é”
 				if (ifBasis[first]==1)
 				{
 					pthread_mutex_unlock(&lock);
 					continue;
 				}
 				for (int j = 0; j < maxsize; j++) {
-					gBasis[first][j] = gRows[i][j];     //ÏûÔª×ÓµÄĞ´Èë
+					gBasis[first][j] = gRows[i][j];     //æ¶ˆå…ƒå­çš„å†™å…¥
 				}
 				ifBasis[first] = 1;
 				ans.insert(pair<int, int*>(first, gBasis[first]));
-				pthread_mutex_unlock(&lock);          //½âËø
+				pthread_mutex_unlock(&lock);          //è§£é”
 				break;
 			}
 
@@ -343,17 +343,17 @@ void* GE_lock_thread(void* param) {
 
 void GE_pthread() {
 	int flag;
-	flag = readRowsFrom();     //¶ÁÈ¡±»ÏûÔªĞĞ
+	flag = readRowsFrom();     //è¯»å–è¢«æ¶ˆå…ƒè¡Œ
 
 	int num = (flag == -1) ? maxrow : flag;
 
-	pthread_mutex_init(&lock, NULL);  //³õÊ¼»¯Ëø
+	pthread_mutex_init(&lock, NULL);  //åˆå§‹åŒ–é”
 
 	pthread_t* handle = (pthread_t*)malloc(NUM_THREADS * sizeof(pthread_t));
 	threadParam_t* param = (threadParam_t*)malloc(NUM_THREADS * sizeof(threadParam_t));
 
 	QueryPerformanceCounter((LARGE_INTEGER*)&head);
-	for (int t_id = 0; t_id < NUM_THREADS; t_id++) {//·ÖÅäÈÎÎñ
+	for (int t_id = 0; t_id < NUM_THREADS; t_id++) {//åˆ†é…ä»»åŠ¡
 		param[t_id].t_id = t_id;
 		param[t_id].num = num;
 		pthread_create(&handle[t_id], NULL, GE_lock_thread, &param[t_id]);
@@ -378,7 +378,7 @@ void* AVX_lock_thread(void* param) {
 	for (int i = t_id; i  < num; i += NUM_THREADS) {
 		while (findfirst(i) != -1) {
 			int first = findfirst(i);
-			if (ifBasis[first]==1) {  //´æÔÚ¸ÃÏûÔª×Ó
+			if (ifBasis[first]==1) {  //å­˜åœ¨è¯¥æ¶ˆå…ƒå­
 				//int* basis = iToBasis.find(first)->second;
 				int j = 0;
 				for (; j + 8 < maxsize; j += 8) {
@@ -392,7 +392,7 @@ void* AVX_lock_thread(void* param) {
 				}
 			}
 			else {
-				pthread_mutex_lock(&lock); //Èç¹ûµÚfirstĞĞÏûÔª×ÓÃ»ÓĞ±»Õ¼ÓÃ£¬Ôò¼ÓËø
+				pthread_mutex_lock(&lock); //å¦‚æœç¬¬firstè¡Œæ¶ˆå…ƒå­æ²¡æœ‰è¢«å ç”¨ï¼Œåˆ™åŠ é”
 				if (ifBasis[first]==1)
 				{
 					pthread_mutex_unlock(&lock);
@@ -414,24 +414,24 @@ void* AVX_lock_thread(void* param) {
 			}
 		}
 	}
-	//cout << t_id << "Ïß³ÌÍê±Ï" << endl;
+	//cout << t_id << "çº¿ç¨‹å®Œæ¯•" << endl;
 	pthread_exit(NULL);
 	return NULL;
 }
 
 void AVX_pthread() {
 	int flag;
-	flag = readRowsFrom();     //¶ÁÈ¡±»ÏûÔªĞĞ
+	flag = readRowsFrom();     //è¯»å–è¢«æ¶ˆå…ƒè¡Œ
 
 	int num = (flag == -1) ? maxrow : flag;
 
-	pthread_mutex_init(&lock, NULL);  //³õÊ¼»¯Ëø
+	pthread_mutex_init(&lock, NULL);  //åˆå§‹åŒ–é”
 
 	pthread_t* handle = (pthread_t*)malloc(NUM_THREADS * sizeof(pthread_t));
 	threadParam_t* param = (threadParam_t*)malloc(NUM_THREADS * sizeof(threadParam_t));
 
 	QueryPerformanceCounter((LARGE_INTEGER*)&head);
-	for (int t_id = 0; t_id < NUM_THREADS; t_id++) {//·ÖÅäÈÎÎñ
+	for (int t_id = 0; t_id < NUM_THREADS; t_id++) {//åˆ†é…ä»»åŠ¡
 		param[t_id].t_id = t_id;
 		param[t_id].num = num;
 		pthread_create(&handle[t_id], NULL, AVX_lock_thread, &param[t_id]);
@@ -449,51 +449,48 @@ void AVX_pthread() {
 }
 
 int main() {
-	ofstream out("ÏûÔª½á¹û.txt");
-	ofstream out1("ÏûÔª½á¹û(AVX).txt");
-	ofstream out2("ÏûÔª½á¹û(GE_lock).txt");
-	ofstream out3("ÏûÔª½á¹û(AVX_lock).txt");
-	ofstream out4("ÏûÔª½á¹û(GE_omp).txt");
-	ofstream out5("ÏûÔª½á¹û(AVX_omp).txt");
+	ofstream out("æ¶ˆå…ƒç»“æœ.txt");
+	ofstream out1("æ¶ˆå…ƒç»“æœ(AVX).txt");
+	ofstream out2("æ¶ˆå…ƒç»“æœ(GE_lock).txt");
+	ofstream out3("æ¶ˆå…ƒç»“æœ(AVX_lock).txt");
+	ofstream out4("æ¶ˆå…ƒç»“æœ(GE_omp).txt");
+	ofstream out5("æ¶ˆå…ƒç»“æœ(AVX_omp).txt");
 	QueryPerformanceFrequency((LARGE_INTEGER*)&freq);
 
 	readBasis();
 	GE();
 	writeResult(out);
-
 	reset();
-
-	readBasis();
-	GE_omp();
-	writeResult(out4);
-
-	reset();
-
-	readBasis();
-	AVX_GE_omp();
-	writeResult(out5);
-
-	reset();
-
+	
 	readBasis();
 	AVX_GE();
 	writeResult(out1);
-
 	reset();
-
+	
 	readBasis();
 	GE_pthread();
 	writeResult(out2);
-
 	reset();
 
 	readBasis();
 	AVX_pthread();
 	writeResult(out3);
-
 	reset();
+	
+	readBasis();
+	GE_omp();
+	writeResult(out4);
+	reset();
+	
+	readBasis();
+	AVX_GE_omp();
+	writeResult(out5);
+	reset();
+
 	out.close();
 	out1.close();
 	out2.close();
 	out3.close();
+	out4.close();
+	out5.close(); 
 }
